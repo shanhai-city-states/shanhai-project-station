@@ -1,0 +1,7 @@
+# 097 · 前端 .gitignore
+
+node_modules/
+dist/
+*.tsbuildinfo
+.vite/
+.DS_Store

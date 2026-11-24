@@ -1,0 +1,699 @@
+/**
+ * 097 · App 布局样式 —— 左 Agent 列表 + 右对话
+ * ★ 刻意不引 UI 框架（理由见 package.json 的 //why-no-ui-framework）
+ * ★ 字号/语义色与 083 对齐（同族产品不该两套观感）
+ */
+
+/* ════════ 主壳 ════════ */
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: var(--pm-topbar-h);
+  flex: none;
+  background: var(--pm-surface);
+  border-bottom: 1px solid var(--pm-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.brand-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #1f2937;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.top-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/**
+ * 版本号 —— 放服务状态点左边，比状态点更弱（客户平时不用看，但要能核对）。
+ * ★ 用等宽数字：版本号变化时宽度不跳，避免顶栏元素左右微动。
+ * ★ 不用背景色块：版本号是「参考信息」，不是「状态」，不该抢状态点的视觉权重。
+ */
+.ver {
+  font-family: var(--pm-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--pm-text-dim);
+  opacity: 0.75;
+  letter-spacing: 0.2px;
+  user-select: text; /* 允许复制版本号去报问题 */
+}
+
+.svc {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--pm-text-dim);
+  padding-left: 10px;
+  border-left: 1px solid var(--pm-border);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pm-pass);
+  flex: none;
+}
+
+.dot.gray {
+  background: #b6bcc8;
+}
+
+.dot.fail {
+  background: var(--pm-fail);
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+/* ════════ 左栏 Agent 列表 ════════ */
+.left {
+  width: var(--pm-left-w);
+  flex: none;
+  background: var(--pm-surface);
+  border-right: 1px solid var(--pm-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.left-head {
+  height: 40px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--pm-border-soft);
+}
+
+.left-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pm-text-dim);
+  letter-spacing: 0.3px;
+}
+
+.left-count {
+  font-size: 11px;
+  color: var(--pm-text-faint);
+  background: var(--pm-surface-soft);
+  border: 1px solid var(--pm-border);
+  border-radius: 999px;
+  padding: 0 6px;
+}
+
+.left-empty {
+  padding: 20px 14px;
+  font-size: 12.5px;
+  color: var(--pm-text-dim);
+  line-height: 1.7;
+}
+
+.left-empty p {
+  margin: 0 0 6px;
+}
+
+.agent-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.agent-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 9px;
+  border: 1px solid transparent;
+  border-radius: var(--pm-radius-sm);
+  background: transparent;
+  text-align: left;
+  color: var(--pm-text);
+}
+
+.agent-row:hover {
+  background: var(--pm-surface-soft);
+}
+
+.agent-row.selected {
+  background: var(--pm-accent-soft);
+  border-color: var(--pm-accent-line);
+}
+
+.presence-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.agent-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* ★ 约束①：徽标一行不带换行（项目名再长也 ellipsis） */
+.agent-name {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent-badge {
+  font-size: 11px;
+  color: var(--pm-text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent-action {
+  font-size: 11.5px;
+  color: var(--pm-text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ════════ 右栏对话 ════════ */
+.right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--pm-bg);
+}
+
+.pane-head {
+  height: 48px;
+  flex: none;
+  background: var(--pm-surface);
+  border-bottom: 1px solid var(--pm-border);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0 18px;
+}
+
+.pane-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pane-sub {
+  font-size: 11.5px;
+  color: var(--pm-text-faint);
+}
+
+.pane-empty {
+  margin: auto;
+  max-width: 380px;
+  text-align: center;
+  padding: 30px;
+  color: var(--pm-text-dim);
+}
+
+.pane-empty h2 {
+  font-size: 16px;
+  margin: 0 0 8px;
+  color: var(--pm-text);
+}
+
+.pane-empty.error h2 {
+  color: var(--pm-fail);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--pm-text-faint);
+  line-height: 1.7;
+}
+
+.chat-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-empty {
+  margin: auto;
+  max-width: 420px;
+  text-align: center;
+  color: var(--pm-text-dim);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* 消息气泡 */
+.msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 72%;
+}
+
+.msg.mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.msg.theirs {
+  align-self: flex-start;
+}
+
+.bubble {
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.msg.theirs .bubble {
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-border);
+}
+
+.msg.mine .bubble {
+  background: var(--pm-accent);
+  color: #fff;
+}
+
+.msg-time {
+  font-size: 10.5px;
+  color: var(--pm-text-faint);
+  margin-top: 3px;
+}
+
+/**
+ * PM 名字标签 —— 只在 pm 消息上方显示。
+ * ★ 为什么不给 client 也显示「我」：右侧蓝底本身就是「我」，再标一句是废话。
+ */
+.msg-who {
+  font-size: 11px;
+  color: var(--pm-text-faint);
+  margin-bottom: 3px;
+  padding-left: 2px;
+}
+
+/**
+ * 系统公告（预算已冻结之类）。
+ * ★ 视觉上必须与「人的话」区分开：它不是你也不是 PM 说的，是系统在通知。
+ *   用虚线边框 + 居中弱化，客户一眼知道「这不是谁在跟我说话」。
+ */
+.msg.theirs.sys {
+  align-self: center;
+  max-width: 88%;
+  align-items: center;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+ * PM 正在回复（「正在看项目状态…」）
+ * ══════════════════════════════════════════════════════════════════
+ * ★ 为什么要有：服务端先返回 201、再异步生成回复。
+ *   没有这个提示，客户发完看到自己那条孤零零挂着，会以为没人管。
+ *
+ * ★ 为什么用三个点而不是进度条：PM 要读 SOP、拆需求，耗时不确定
+ *   （2 秒到 20 秒都可能）。进度条会给「快好了」的错误暗示，
+ *   三点动画只表达「还在进行」。
+ *
+ * ★ 尊重 prefers-reduced-motion：动效敏感的用户看到静态三点，不闪。
+ */
+.thinking-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.thinking-bubble .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pm-text-faint);
+  animation: thinking-bounce 1.4s ease-in-out infinite;
+}
+
+.thinking-bubble .dot:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.thinking-bubble .dot:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.thinking-bubble .thinking-text {
+  margin-left: 6px;
+  font-size: 12px;
+  color: var(--pm-text-faint);
+}
+
+@keyframes thinking-bounce {
+  0%, 60%, 100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking-bubble .dot {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+.msg.theirs.sys .bubble {
+  background: var(--pm-surface-soft);
+  border: 1px dashed var(--pm-border);
+  color: var(--pm-text-faint);
+  font-size: 12px;
+  text-align: center;
+}
+
+/**
+ * 发送失败提示 —— 放在输入框正上方（贴着出问题的地方）。
+ * ★ 不用 toast：toast 几秒就消失，客户可能正在打字没看见；
+ *   贴在输入区，他下次按发送前一定看到。
+ */
+.composer-error {
+  flex: none;
+  margin: 0 18px 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fdf0ef;
+  border: 1px solid #f3c4c0;
+  color: #a8332a;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* 输入区 */
+.composer {
+  flex: none;
+  background: var(--pm-surface);
+  border-top: 1px solid var(--pm-border);
+  padding: 10px 14px;
+  display: flex;
+  gap: 8px;
+}
+
+.composer input {
+  flex: 1;
+  height: 34px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-sm);
+  background: var(--pm-surface-soft);
+  color: var(--pm-text);
+  padding: 0 11px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.composer input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ════════ 卡片 ════════ */
+.card {
+  align-self: center;
+  width: 100%;
+  max-width: 520px;
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius);
+  overflow: hidden;
+}
+
+.card-info {
+  border-left: 3px solid var(--pm-accent);
+}
+
+.card-pass {
+  border-left: 3px solid var(--pm-pass);
+}
+
+.card-fail {
+  border-left: 3px solid var(--pm-fail);
+}
+
+.card-warn {
+  border-left: 3px solid var(--pm-warn);
+}
+
+.card-head {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--pm-border-soft);
+}
+
+.card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+}
+
+.kv .k {
+  color: var(--pm-text-dim);
+  flex: none;
+}
+
+.kv .v {
+  color: var(--pm-text);
+  text-align: right;
+  word-break: break-all;
+}
+
+.mono {
+  font-family: var(--pm-mono);
+  font-size: 12px;
+}
+
+.pending {
+  color: var(--pm-text-faint);
+  font-style: italic;
+}
+
+.card-note {
+  font-size: 11.5px;
+  color: var(--pm-text-dim);
+  line-height: 1.7;
+  padding: 7px 10px;
+  background: var(--pm-surface-soft);
+  border-radius: var(--pm-radius-sm);
+}
+
+.card-note.dim {
+  color: var(--pm-text-faint);
+}
+
+.card-warn-note {
+  font-size: 11.5px;
+  color: var(--pm-warn);
+  background: var(--pm-warn-soft);
+  border-radius: var(--pm-radius-sm);
+  padding: 7px 10px;
+  line-height: 1.7;
+}
+
+.card-fail-note {
+  font-size: 12px;
+  color: var(--pm-fail);
+  background: var(--pm-fail-soft);
+  border-radius: var(--pm-radius-sm);
+  padding: 8px 10px;
+  line-height: 1.7;
+}
+
+.fail-line {
+  margin-bottom: 7px;
+}
+
+.fail-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.card-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 2px;
+}
+
+/* 按钮 */
+.btn {
+  height: 30px;
+  border-radius: var(--pm-radius-sm);
+  border: 1px solid var(--pm-border);
+  background: var(--pm-surface);
+  color: var(--pm-text);
+  font-size: 12.5px;
+  padding: 0 12px;
+}
+
+.btn.sm {
+  height: 26px;
+  font-size: 12px;
+  padding: 0 9px;
+}
+
+.btn.primary {
+  background: var(--pm-accent);
+  border-color: var(--pm-accent);
+  color: #fff;
+}
+
+.btn.ghost {
+  background: transparent;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 验收项 */
+.check-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.check-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.check-sym {
+  flex: none;
+  font-weight: 700;
+}
+
+.check-list li.ok .check-sym {
+  color: var(--pm-pass);
+}
+
+.check-list li.bad .check-sym {
+  color: var(--pm-fail);
+}
+
+.check-label {
+  flex: 1;
+}
+
+.check-detail {
+  font-size: 11.5px;
+  color: var(--pm-text-faint);
+}
+
+.chip {
+  display: inline-block;
+  font-size: 11.5px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.chip-gray {
+  background: #6b7280;
+}
+
+/* 可访问性：屏幕阅读器专用 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ════════ 凭据接入（stub 期）════════ */
+.token-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.token-form input {
+  flex: 1;
+  height: 34px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-sm);
+  background: var(--pm-surface);
+  color: var(--pm-text);
+  padding: 0 11px;
+  font-family: var(--pm-mono);
+  font-size: 12px;
+}
+
+/* 警告态状态点（探针绿但凭据异常）*/
+.dot.warn {
+  background: var(--pm-warn);
+}
